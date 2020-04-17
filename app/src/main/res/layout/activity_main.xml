@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="50dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="是否已经获取存空间权限："
+        app:layout_constraintBottom_toTopOf="@+id/guideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvReadExternalStorageState"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvReadExternalStorageState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="否"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/btnRequestPermission"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="请求存储空间权限"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideLine"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <Button
+        android:id="@+id/btnAddImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="使用MediaStore添加图片"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/btnQueryImage"
+        app:layout_constraintEnd_toEndOf="@+id/btnRequestPermission"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/btnRequestPermission"
+        app:layout_constraintTop_toBottomOf="@+id/btnRequestPermission" />
+
+    <Button
+        android:id="@+id/btnQueryImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="5dp"
+        android:text="使用MediaStore获取所有(权限)/本应用图片\n删除非本应用图片(权限)"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/btnSelectPdf"
+        app:layout_constraintEnd_toEndOf="@+id/btnRequestPermission"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/btnRequestPermission"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddImage" />
+
+    <Button
+        android:id="@+id/btnSelectPdf"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="使用SAF选择PDF文件"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@id/btnDownloadFile"
+        app:layout_constraintEnd_toEndOf="@+id/btnRequestPermission"
+        app:layout_constraintStart_toStartOf="@+id/btnRequestPermission"
+        app:layout_constraintTop_toBottomOf="@id/btnQueryImage" />
+
+
+    <Button
+        android:id="@+id/btnDownloadFile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="下载apk至Download目录并安装"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnRequestPermission"
+        app:layout_constraintStart_toStartOf="@+id/btnRequestPermission"
+        app:layout_constraintTop_toBottomOf="@id/btnSelectPdf" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ExternalScopedTest</string>
+
+    <string name="delete_dialog_title">确定删除?</string>
+    <string name="delete_dialog_message">删除 %s?</string>
+    <string name="delete_dialog_positive">删除</string>
+    <string name="delete_dialog_negative">取消</string>
+</resources>
