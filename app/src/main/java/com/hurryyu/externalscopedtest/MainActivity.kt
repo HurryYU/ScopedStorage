@@ -2,6 +2,7 @@ package com.hurryyu.externalscopedtest
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -55,12 +56,25 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.btnAddImage.setOnClickListener {
+            // 一般来说保存图片到本地的场景多见于在线图片的保存
+            // 可用BitmapFactory.decodeStream()得到Bitmap对象后保存
+            // 这里用本地图片模拟演示
+            // 如果想保存在线图片到本地,请参考
+            // @see saveNetworkGIFToPicturePublicFolder
             val bitmap = BitmapFactory.decodeResource(resources, R.drawable.die)
             val displayName = "${System.currentTimeMillis()}.jpg"
             val mimeType = "image/jpeg"
             val compressFormat = Bitmap.CompressFormat.JPEG
 
             saveBitmapToPicturePublicFolder(bitmap, displayName, mimeType, compressFormat)
+        }
+
+        viewBinding.btnAddGIFImage.setOnClickListener {
+            // 一般来说保存图片到本地的场景多见于在线图片的保存
+            val gifPath =
+                "http://img.doutula.com/production/uploads/image/2020/08/29/20200829685428_FxIpbl.gif"
+            val displayName = "${System.currentTimeMillis()}.gif"
+            saveNetworkGIFToPicturePublicFolder(gifPath, displayName)
         }
 
         viewBinding.btnQueryImage.setOnClickListener {
@@ -141,6 +155,60 @@ class MainActivity : AppCompatActivity() {
         mimeType: String,
         compressFormat: Bitmap.CompressFormat
     ) {
+        val uri =
+            contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                generatorSavePicToPublicFolderContentValues(displayName, mimeType)
+            )
+        uri?.also {
+            val outputStream = contentResolver.openOutputStream(it)
+            outputStream?.also { os ->
+                bitmap.compress(compressFormat, 100, os)
+                os.close()
+                Toast.makeText(this, "添加图片成功", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
+     * 将在线GIF图片保存到本地
+     * 与文件下载保存十分相似
+     */
+    private fun saveNetworkGIFToPicturePublicFolder(photoUrl: String, photoName: String) {
+        val uri =
+            contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                generatorSavePicToPublicFolderContentValues(photoName, "image/gif")
+            )
+        thread {
+            val url = URL(photoUrl)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            val inputStream = connection.inputStream
+            val bis = BufferedInputStream(inputStream)
+            uri?.also {
+                val outputStream = contentResolver.openOutputStream(uri) ?: return@thread
+                val bos = BufferedOutputStream(outputStream)
+                val buffer = ByteArray(1024)
+                var bytes = bis.read(buffer)
+                while (bytes >= 0) {
+                    bos.write(buffer, 0, bytes)
+                    bos.flush()
+                    bytes = bis.read(buffer)
+                }
+                bos.close()
+                runOnUiThread {
+                    Toast.makeText(this, "添加图片成功", Toast.LENGTH_SHORT).show()
+                }
+            }
+            bis.close()
+        }
+    }
+
+    private fun generatorSavePicToPublicFolderContentValues(
+        displayName: String,
+        mimeType: String
+    ): ContentValues {
         val contentValues = ContentValues()
         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
         contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
@@ -154,16 +222,7 @@ class MainActivity : AppCompatActivity() {
             }
             contentValues.put(MediaStore.MediaColumns.DATA, path + displayName)
         }
-        val uri =
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-        uri?.also {
-            val outputStream = contentResolver.openOutputStream(it)
-            outputStream?.also { os ->
-                bitmap.compress(compressFormat, 100, os)
-                os.close()
-                Toast.makeText(this, "添加图片成功", Toast.LENGTH_SHORT).show()
-            }
-        }
+        return contentValues
     }
 
     private fun updatePermissionState() {
